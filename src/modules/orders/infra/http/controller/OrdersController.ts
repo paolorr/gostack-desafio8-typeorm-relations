@@ -5,12 +5,26 @@ import { container } from 'tsyringe';
 import CreateOrderService from '@modules/orders/services/CreateOrderService';
 import FindOrderService from '@modules/orders/services/FindOrderService';
 
+interface IRequest {
+  customer_id: string;
+  products: Array<{
+    id: string;
+    quantity: number;
+  }>;
+}
+
 export default class OrdersController {
   public async show(request: Request, response: Response): Promise<Response> {
-    // TODO
+    const { id } = request.params;
+    const service = container.resolve(FindOrderService);
+    const order = await service.execute({ id });
+    return response.json(order);
   }
 
   public async create(request: Request, response: Response): Promise<Response> {
-    // TODO
+    const { customer_id, products }: IRequest = request.body;
+    const service = container.resolve(CreateOrderService);
+    const order = await service.execute({ customer_id, products });
+    return response.json(order);
   }
 }
